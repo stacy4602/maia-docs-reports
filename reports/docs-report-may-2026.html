@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docs Monthly Report — May 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #5c3dde;
+    --brand-light: #ede9ff;
+    --accent: #0ea5e9;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f9fafb;
+    --card: #ffffff;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; color: var(--text); background: var(--bg); }
+  a { color: var(--brand); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* HEADER */
+  .site-header { background: linear-gradient(135deg, #1e0a5e 0%, #3b1fa8 60%, #5c3dde 100%); color: #fff; padding: 36px 40px 28px; }
+  .site-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+  .site-header .sub { font-size: 13px; opacity: 0.7; margin-top: 6px; }
+  .site-header .pill { display: inline-block; background: rgba(255,255,255,0.15); border-radius: 20px; padding: 3px 12px; font-size: 12px; margin-left: 10px; }
+
+  /* LAYOUT */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+  .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 32px 0 12px; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* KPI GRID */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin: 24px 0; }
+  .kpi-card { background: var(--card); border-radius: 12px; padding: 20px 22px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--brand); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-card.amber::before { background: var(--amber); }
+  .kpi-card.accent::before { background: var(--accent); }
+  .kpi-card .val { font-size: 30px; font-weight: 700; color: var(--text); line-height: 1.1; margin-bottom: 4px; }
+  .kpi-card .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* HIGHLIGHT CARDS */
+  .highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 8px; }
+  .highlight-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; align-items: flex-start; gap: 14px; }
+  .highlight-card .icon { font-size: 26px; flex-shrink: 0; }
+  .highlight-card .hl-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .highlight-card .hl-value { font-size: 15px; font-weight: 600; color: var(--text); word-break: break-word; }
+
+  /* CHART CARDS */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 800px) { .chart-grid { grid-template-columns: 1fr; } }
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .chart-card h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 16px; }
+  .chart-card canvas { max-height: 260px; }
+  .chart-card.full { grid-column: 1 / -1; }
+
+  /* TABLES */
+  .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+  .table-card h3 { font-size: 13px; font-weight: 600; padding: 16px 20px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .badge { background: var(--brand-light); color: var(--brand); font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { background: #f8f9fa; padding: 9px 14px; text-align: left; font-weight: 500; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  thead th:first-child { width: 32px; text-align: center; }
+  tbody td { padding: 9px 14px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+  tbody td.row-num { text-align: center; color: var(--muted); font-size: 11px; font-weight: 500; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #fafafa; }
+  td.path { font-family: monospace; font-size: 12px; color: var(--brand); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  td.url  { font-family: monospace; font-size: 11px; color: var(--muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .no-data { padding: 32px; color: var(--muted); text-align: center; font-style: italic; font-size: 13px; }
+
+  /* FOOTER */
+  .site-footer { text-align: center; font-size: 12px; color: var(--muted); padding: 40px 0 60px; border-top: 1px solid var(--border); margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="container">
+    <h1>📊 Docs Monthly Report <span class="pill">May 2026</span></h1>
+    <div class="sub">2026-05-01 → 2026-05-31 &nbsp;·&nbsp; Generated 6/23/2026, 4:34:22 PM</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="section-title">Key metrics</div>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="val">93,996</div><div class="lbl">Page views</div></div>
+    <div class="kpi-card accent"><div class="val">35,736</div><div class="lbl">Unique users</div></div>
+    <div class="kpi-card green"><div class="val">34,065</div><div class="lbl">New users</div></div>
+    <div class="kpi-card"><div class="val">49,355</div><div class="lbl">Sessions</div></div>
+    <div class="kpi-card amber"><div class="val">67.2%</div><div class="lbl">Bounce rate</div></div>
+    <div class="kpi-card"><div class="val">3m 0s</div><div class="lbl">Avg session</div></div>
+  </div>
+
+  <div class="section-title">Highlights</div>
+  <div class="highlights">
+    <div class="highlight-card">
+      <div class="icon">🏆</div>
+      <div><div class="hl-label">Top page</div><div class="hl-value">/</div></div>
+    </div>
+    <div class="highlight-card">
+      <div class="icon">🔍</div>
+      <div><div class="hl-label">Top search query</div><div class="hl-value">—</div></div>
+    </div>
+    <div class="highlight-card">
+      <div class="icon">🌐</div>
+      <div><div class="hl-label">Top traffic source</div><div class="hl-value">(direct) / (none)</div></div>
+    </div>
+    <div class="highlight-card">
+      <div class="icon">📈</div>
+      <div><div class="hl-label">New vs returning</div><div class="hl-value">34,065 new · 1,671 returning</div></div>
+    </div>
+  </div>
+
+  <div class="section-title">Traffic & pages</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Traffic sources — sessions</h3>
+      <canvas id="trafficChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Top 10 pages — views</h3>
+      <canvas id="pagesChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Top search queries — event count</h3>
+      <canvas id="searchChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Top internal link clicks</h3>
+      <canvas id="journeyChart"></canvas>
+    </div>
+  </div>
+
+  <div class="section-title">Top pages — detail</div>
+  <div class="table-card">
+    <h3>Pages by views <span class="badge">top 15</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Page path</th><th>Views</th><th>Users</th><th>Avg session</th><th>Bounce rate</th></tr></thead>
+      <tbody><tr><td class="row-num">1</td><td>/</td><td>5,881</td><td>1,058</td><td>5m 5s</td><td>42.7%</td></tr><tr><td class="row-num">2</td><td>/docs/components/table-input</td><td>2,595</td><td>2,579</td><td>0m 4s</td><td>98.6%</td></tr><tr><td class="row-num">3</td><td>/metl/</td><td>1,503</td><td>798</td><td>1m 35s</td><td>35.6%</td></tr><tr><td class="row-num">4</td><td>/docs/api-reference/maia-api-overview</td><td>900</td><td>188</td><td>4m 21s</td><td>50.9%</td></tr><tr><td class="row-num">5</td><td>/docs/security/network-access-and-ip-allowlist-requirements</td><td>768</td><td>709</td><td>0m 33s</td><td>88.1%</td></tr><tr><td class="row-num">6</td><td>/docs/guides/maia-overview</td><td>722</td><td>296</td><td>1m 54s</td><td>61.9%</td></tr><tr><td class="row-num">7</td><td>/docs/changelog/2026-changelog</td><td>427</td><td>115</td><td>2m 5s</td><td>56.3%</td></tr><tr><td class="row-num">8</td><td>/metl/docs/1975061/</td><td>424</td><td>291</td><td>1m 40s</td><td>27.9%</td></tr><tr><td class="row-num">9</td><td>/data-productivity-cloud/api/docs/endpoint-reference/</td><td>366</td><td>200</td><td>5m 40s</td><td>35.4%</td></tr><tr><td class="row-num">10</td><td>/metl/docs/launching-matillion-etl/</td><td>360</td><td>333</td><td>0m 43s</td><td>20.6%</td></tr><tr><td class="row-num">11</td><td>/docs/administration/registration</td><td>300</td><td>220</td><td>1m 10s</td><td>35.3%</td></tr><tr><td class="row-num">12</td><td>/docs/administration/editions</td><td>261</td><td>243</td><td>0m 27s</td><td>52.5%</td></tr><tr><td class="row-num">13</td><td>/docs/api-reference/mcp-server</td><td>260</td><td>121</td><td>2m 29s</td><td>66.8%</td></tr><tr><td class="row-num">14</td><td>/docs/guides/runner-overview</td><td>260</td><td>135</td><td>2m 43s</td><td>43.3%</td></tr><tr><td class="row-num">15</td><td>/data-productivity-cloud/changelog/docs/2026-changelog/</td><td>255</td><td>159</td><td>1m 19s</td><td>28.7%</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="section-title">Traffic sources</div>
+  <div class="table-card">
+    <h3>Source / medium breakdown <span class="badge">top 10</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Source</th><th>Medium</th><th>Sessions</th><th>Users</th></tr></thead>
+      <tbody><tr><td class="row-num">1</td><td>(direct)</td><td>(none)</td><td>26,368</td><td>23,069</td></tr><tr><td class="row-num">2</td><td>google</td><td>organic</td><td>9,119</td><td>6,477</td></tr><tr><td class="row-num">3</td><td>docs.matillion.com</td><td>referral</td><td>7,050</td><td>4,593</td></tr><tr><td class="row-num">4</td><td>(not set)</td><td>(not set)</td><td>1,290</td><td>922</td></tr><tr><td class="row-num">5</td><td>localhost:3002</td><td>referral</td><td>1,272</td><td>1,268</td></tr><tr><td class="row-num">6</td><td>bing</td><td>organic</td><td>943</td><td>379</td></tr><tr><td class="row-num">7</td><td>statics.teams.cdn.office.net</td><td>referral</td><td>653</td><td>258</td></tr><tr><td class="row-num">8</td><td>metl</td><td>referral</td><td>390</td><td>132</td></tr><tr><td class="row-num">9</td><td>github.com</td><td>referral</td><td>231</td><td>19</td></tr><tr><td class="row-num">10</td><td>matillion.lightning.force.com</td><td>referral</td><td>225</td><td>15</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="section-title">Search analytics</div>
+  <div class="table-card">
+    <h3>Mintlify search queries <span class="badge">top 30</span></h3>
+    <div class="no-data">No search queries found</div>
+  </div>
+
+  <div class="table-card">
+    <h3>Search results selected <span class="badge">top 30</span></h3>
+    <div class="no-data">No search result selections found</div>
+  </div>
+
+  <div class="section-title">User journey</div>
+  <div class="table-card">
+    <h3>Internal link clicks <span class="badge">top 20</span></h3>
+    <div class="no-data">No internal link click events found</div>
+  </div>
+
+</div>
+
+<div class="site-footer">
+  Auto-generated by n8n · Matillion Docs · May 2026
+</div>
+
+<script>
+const BRAND = '#5c3dde', ACCENT = '#0ea5e9', GREEN = '#10b981', AMBER = '#f59e0b';
+const COLORS = [BRAND, ACCENT, GREEN, AMBER, '#ec4899', '#f97316', '#14b8a6', '#8b5cf6'];
+
+const chartDefaults = {
+  responsive: true,
+  plugins: { legend: { display: false } },
+  scales: { x: { ticks: { font: { size: 11 } }, grid: { display: false } }, y: { beginAtZero: true, ticks: { font: { size: 11 } }, grid: { color: '#f3f4f6' } } }
+};
+
+new Chart(document.getElementById('trafficChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ["(direct) / (none)","google / organic","docs.matillion.com / referral","(not set) / (not set)","localhost:3002 / referral","bing / organic","statics.teams.cdn.office.net / referral","metl / referral"],
+    datasets: [{ label: 'Sessions', data: [26368,9119,7050,1290,1272,943,653,390], backgroundColor: COLORS, borderRadius: 5 }]
+  },
+  options: { ...chartDefaults, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.y.toLocaleString() + ' sessions' } } } }
+});
+
+new Chart(document.getElementById('pagesChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ["/","/docs/components/table-input","/metl/","/docs/api-reference/maia-api-overview","/docs/security/network-access-and-ip-allowlist-requirements","/docs/guides/maia-overview","/docs/changelog/2026-changelog","/metl/docs/1975061/","/data-productivity-cloud/api/docs/endpoint-reference/","/metl/docs/launching-matillion-etl/"],
+    datasets: [{ label: 'Views', data: [5881,2595,1503,900,768,722,427,424,366,360], backgroundColor: ACCENT, borderRadius: 5 }]
+  },
+  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { font: { size: 11 } }, grid: { color: '#f3f4f6' } }, y: { ticks: { font: { size: 10 } }, grid: { display: false } } } }
+});
+
+new Chart(document.getElementById('searchChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: [],
+    datasets: [{ label: 'Searches', data: [], backgroundColor: GREEN, borderRadius: 5 }]
+  },
+  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { font: { size: 11 } }, grid: { color: '#f3f4f6' } }, y: { ticks: { font: { size: 10 } }, grid: { display: false } } } }
+});
+
+new Chart(document.getElementById('journeyChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: [],
+    datasets: [{ label: 'Clicks', data: [], backgroundColor: AMBER, borderRadius: 5 }]
+  },
+  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { font: { size: 11 } }, grid: { color: '#f3f4f6' } }, y: { ticks: { font: { size: 10 } }, grid: { display: false } } } }
+});
+</script>
+</body>
+</html>
