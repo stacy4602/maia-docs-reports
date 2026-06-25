@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docs Monthly Report — 2026-06-18 to 2026-06-24</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #5c3dde;
+    --brand-light: #ede9ff;
+    --accent: #0ea5e9;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f9fafb;
+    --card: #ffffff;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; color: var(--text); background: var(--bg); }
+  a { color: var(--brand); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* HEADER */
+  .site-header { background: linear-gradient(135deg, #1e0a5e 0%, #3b1fa8 60%, #5c3dde 100%); color: #fff; padding: 36px 40px 28px; }
+  .site-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+  .site-header .sub { font-size: 13px; opacity: 0.7; margin-top: 6px; }
+  .site-header .pill { display: inline-block; background: rgba(255,255,255,0.15); border-radius: 20px; padding: 3px 12px; font-size: 12px; margin-left: 10px; }
+
+  /* LAYOUT */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+  .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 32px 0 12px; display: flex; align-items: center; gap: 8px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* KPI GRID */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin: 24px 0; }
+  .kpi-card { background: var(--card); border-radius: 12px; padding: 20px 22px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--brand); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-card.amber::before { background: var(--amber); }
+  .kpi-card.accent::before { background: var(--accent); }
+  .kpi-card .val { font-size: 30px; font-weight: 700; color: var(--text); line-height: 1.1; margin-bottom: 4px; }
+  .kpi-card .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* HIGHLIGHT CARDS */
+  .highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 8px; }
+  .highlight-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; display: flex; align-items: flex-start; gap: 14px; }
+  .highlight-card .icon { font-size: 26px; flex-shrink: 0; }
+  .highlight-card .hl-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .highlight-card .hl-value { font-size: 15px; font-weight: 600; color: var(--text); word-break: break-word; }
+
+  /* CHART CARDS */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 800px) { .chart-grid { grid-template-columns: 1fr; } }
+  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .chart-card h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 16px; }
+  .chart-card canvas { max-height: 260px; }
+  .chart-card.full { grid-column: 1 / -1; }
+
+  /* TABLES */
+  .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+  .table-card h3 { font-size: 13px; font-weight: 600; padding: 16px 20px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .badge { background: var(--brand-light); color: var(--brand); font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { background: #f8f9fa; padding: 9px 14px; text-align: left; font-weight: 500; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  thead th:first-child { width: 32px; text-align: center; }
+  tbody td { padding: 9px 14px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+  tbody td.row-num { text-align: center; color: var(--muted); font-size: 11px; font-weight: 500; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #fafafa; }
+  td.path { font-family: monospace; font-size: 12px; color: var(--brand); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  td.url  { font-family: monospace; font-size: 11px; color: var(--muted); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .no-data { padding: 32px; color: var(--muted); text-align: center; font-style: italic; font-size: 13px; }
+
+  /* FOOTER */
+  .site-footer { text-align: center; font-size: 12px; color: var(--muted); padding: 40px 0 60px; border-top: 1px solid var(--border); margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="container">
+    <h1>📊 Docs Monthly Report <span class="pill">2026-06-18 to 2026-06-24</span></h1>
+    <div class="sub">2026-06-18 → 2026-06-24 &nbsp;·&nbsp; Generated 6/25/2026, 7:24:02 AM</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="section-title">Key metrics</div>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="val">10,430</div><div class="lbl">Page views</div></div>
+    <div class="kpi-card accent"><div class="val">4,938</div><div class="lbl">Unique users</div></div>
+    <div class="kpi-card green"><div class="val">4,492</div><div class="lbl">New users</div></div>
+    <div class="kpi-card"><div class="val">6,481</div><div class="lbl">Sessions</div></div>
+    <div class="kpi-card amber"><div class="val">72.3%</div><div class="lbl">Bounce rate</div></div>
+    <div class="kpi-card"><div class="val">2m 58s</div><div class="lbl">Avg session</div></div>
+  </div>
+
+  <div class="section-title">Highlights</div>
+  <div class="highlights">
+    <div class="highlight-card">
+      <div class="icon">🏆</div>
+      <div><div class="hl-label">Top page</div><div class="hl-value">/</div></div>
+    </div>
+    <div class="highlight-card">
+      <div class="icon">🔍</div>
+      <div><div class="hl-label">Top search query</div><div class="hl-value">supported python</div></div>
+    </div>
+    <div class="highlight-card">
+      <div class="icon">🌐</div>
+      <div><div class="hl-label">Top traffic source</div><div class="hl-value">(direct) / (none)</div></div>
+    </div>
+    <div class="highlight-card">
+      <div class="icon">📈</div>
+      <div><div class="hl-label">New vs returning</div><div class="hl-value">4,492 new · 446 returning</div></div>
+    </div>
+  </div>
+
+  <div class="section-title">Traffic & pages</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Traffic sources — sessions</h3>
+      <canvas id="trafficChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Top 10 pages — views</h3>
+      <canvas id="pagesChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Top search queries — event count</h3>
+      <canvas id="searchChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Top internal link clicks</h3>
+      <canvas id="journeyChart"></canvas>
+    </div>
+  </div>
+
+  <div class="section-title">Top pages — detail</div>
+  <div class="table-card">
+    <h3>Pages by views <span class="badge">top 15</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Page path</th><th>Views</th><th>Users</th><th>Avg session</th><th>Bounce rate</th></tr></thead>
+      <tbody><tr><td class="row-num">1</td><td>/</td><td>1,130</td><td>223</td><td>4m 0s</td><td>50.7%</td></tr><tr><td class="row-num">2</td><td>/docs/components/table-input</td><td>596</td><td>578</td><td>0m 3s</td><td>98.8%</td></tr><tr><td class="row-num">3</td><td>/docs/api-reference/maia-api-overview</td><td>216</td><td>46</td><td>5m 49s</td><td>60.2%</td></tr><tr><td class="row-num">4</td><td>/docs/security/network-access-and-ip-allowlist-requirements</td><td>208</td><td>188</td><td>0m 29s</td><td>87.7%</td></tr><tr><td class="row-num">5</td><td>/docs/guides/maia-overview</td><td>148</td><td>58</td><td>4m 0s</td><td>60.5%</td></tr><tr><td class="row-num">6</td><td>/docs/administration/registration</td><td>96</td><td>44</td><td>2m 45s</td><td>61.5%</td></tr><tr><td class="row-num">7</td><td>/docs/changelog/2026-changelog</td><td>89</td><td>43</td><td>2m 55s</td><td>57.7%</td></tr><tr><td class="row-num">8</td><td>/docs/administration/single-sign-on</td><td>79</td><td>19</td><td>4m 30s</td><td>54.2%</td></tr><tr><td class="row-num">9</td><td>/docs/api-reference/maia-api-authentication</td><td>70</td><td>18</td><td>2m 4s</td><td>34.3%</td></tr><tr><td class="row-num">10</td><td>/docs/administration/environment-roles</td><td>58</td><td>23</td><td>3m 29s</td><td>52.3%</td></tr><tr><td class="row-num">11</td><td>/docs/components/data-transfer</td><td>57</td><td>24</td><td>2m 3s</td><td>54.8%</td></tr><tr><td class="row-num">12</td><td>/docs/administration/account-roles</td><td>52</td><td>21</td><td>4m 12s</td><td>37.5%</td></tr><tr><td class="row-num">13</td><td>/docs/guides/runner-overview</td><td>51</td><td>37</td><td>1m 25s</td><td>50.0%</td></tr><tr><td class="row-num">14</td><td>/docs/streaming/streaming-pipelines</td><td>49</td><td>22</td><td>1m 38s</td><td>42.4%</td></tr><tr><td class="row-num">15</td><td>/docs/components/connectors-overview</td><td>48</td><td>23</td><td>1m 1s</td><td>37.9%</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="section-title">Traffic sources</div>
+  <div class="table-card">
+    <h3>Source / medium breakdown <span class="badge">top 10</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Source</th><th>Medium</th><th>Sessions</th><th>Users</th></tr></thead>
+      <tbody><tr><td class="row-num">1</td><td>(direct)</td><td>(none)</td><td>2,564</td><td>2,368</td></tr><tr><td class="row-num">2</td><td>google</td><td>organic</td><td>1,499</td><td>1,389</td></tr><tr><td class="row-num">3</td><td>docs.matillion.com</td><td>referral</td><td>1,414</td><td>893</td></tr><tr><td class="row-num">4</td><td>(not set)</td><td>(not set)</td><td>406</td><td>319</td></tr><tr><td class="row-num">5</td><td>localhost:3002</td><td>referral</td><td>284</td><td>284</td></tr><tr><td class="row-num">6</td><td>bing</td><td>organic</td><td>54</td><td>39</td></tr><tr><td class="row-num">7</td><td>statics.teams.cdn.office.net</td><td>referral</td><td>26</td><td>18</td></tr><tr><td class="row-num">8</td><td>matillion.lightning.force.com</td><td>referral</td><td>20</td><td>5</td></tr><tr><td class="row-num">9</td><td>roadmap.matillion.com</td><td>referral</td><td>18</td><td>1</td></tr><tr><td class="row-num">10</td><td>matillion.atlassian.net</td><td>referral</td><td>16</td><td>3</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="section-title">Search analytics</div>
+  <div class="table-card">
+    <h3>Mintlify search queries <span class="badge">top 30</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Query</th><th>Searches</th><th>Users</th></tr></thead>
+      <tbody><tr><td class="row-num">1</td><td>supported python</td><td>5</td><td>4</td></tr><tr><td class="row-num">2</td><td>Google big</td><td>3</td><td>1</td></tr><tr><td class="row-num">3</td><td>environment</td><td>3</td><td>3</td></tr><tr><td class="row-num">4</td><td>environment var</td><td>3</td><td>2</td></tr><tr><td class="row-num">5</td><td>github app</td><td>3</td><td>3</td></tr><tr><td class="row-num">6</td><td>maia doesnt have any options to read-from or write-to ftps locations. what are some alternatives we </td><td>3</td><td>1</td></tr><tr><td class="row-num">7</td><td>architecture</td><td>2</td><td>2</td></tr><tr><td class="row-num">8</td><td>azure docu</td><td>2</td><td>1</td></tr><tr><td class="row-num">9</td><td>context.update</td><td>2</td><td>1</td></tr><tr><td class="row-num">10</td><td>csv load</td><td>2</td><td>2</td></tr><tr><td class="row-num">11</td><td>data tra</td><td>2</td><td>1</td></tr><tr><td class="row-num">12</td><td>dpc</td><td>2</td><td>2</td></tr><tr><td class="row-num">13</td><td>exce</td><td>2</td><td>2</td></tr><tr><td class="row-num">14</td><td>maia</td><td>2</td><td>2</td></tr><tr><td class="row-num">15</td><td>netsuite</td><td>2</td><td>2</td></tr><tr><td class="row-num">16</td><td>project level API</td><td>2</td><td>1</td></tr><tr><td class="row-num">17</td><td>python</td><td>2</td><td>2</td></tr><tr><td class="row-num">18</td><td>smb</td><td>2</td><td>1</td></tr><tr><td class="row-num">19</td><td>snowflake</td><td>2</td><td>2</td></tr><tr><td class="row-num">20</td><td>supported</td><td>2</td><td>2</td></tr><tr><td class="row-num">21</td><td>zuora</td><td>2</td><td>2</td></tr><tr><td class="row-num">22</td><td>Aggregate</td><td>1</td><td>1</td></tr><tr><td class="row-num">23</td><td>Artifact</td><td>1</td><td>1</td></tr><tr><td class="row-num">24</td><td>CUSTOM_CERTIFICATE_STAGE</td><td>1</td><td>1</td></tr><tr><td class="row-num">25</td><td>Custom connector pag</td><td>1</td><td>1</td></tr><tr><td class="row-num">26</td><td>Example of envir</td><td>1</td><td>1</td></tr><tr><td class="row-num">27</td><td>Example of environemnt creation through</td><td>1</td><td>1</td></tr><tr><td class="row-num">28</td><td>Example of environemnt creation through API CAll</td><td>1</td><td>1</td></tr><tr><td class="row-num">29</td><td>Example of pr</td><td>1</td><td>1</td></tr><tr><td class="row-num">30</td><td>Gi</td><td>1</td><td>1</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="table-card">
+    <h3>Search results selected <span class="badge">top 30</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Query</th><th>Result title</th><th>Result URL</th><th>Clicks</th><th>Avg pos.</th></tr></thead>
+      <tbody><tr><td class="row-num">1</td><td>allow list</td><td>Allow list</td><td>/docs/guides/manage-runners#allow-list</td><td>2</td><td>2.0</td></tr><tr><td class="row-num">2</td><td>architecture</td><td>Architecture</td><td>/docs/guides/runner-overview#architecture</td><td>2</td><td>2.0</td></tr><tr><td class="row-num">3</td><td>azure docu</td><td>Azure Document Intelligence</td><td>/docs/components/azure-document-intelligence#azure-document-intelligence</td><td>2</td><td>2.0</td></tr><tr><td class="row-num">4</td><td>command palette</td><td>Command palette</td><td>/docs/guides/designer-ui-basics#command-palette</td><td>2</td><td>2.0</td></tr><tr><td class="row-num">5</td><td>csv load</td><td>CSV Load</td><td>/docs/components/csv-load#csv-load</td><td>2</td><td>2.0</td></tr><tr><td class="row-num">6</td><td>data tra</td><td>Data Transfer</td><td>/docs/components/data-transfer#data-transfer</td><td>2</td><td>2.0</td></tr><tr><td class="row-num">7</td><td>github app</td><td>What is the Maia GitHub app?</td><td>/docs/guides/matillion-github-app-overview#what-is-the-maia-github-app</td><td>2</td><td>2.0</td></tr><tr><td class="row-num">8</td><td>python</td><td>Installing Python libraries</td><td>/docs/guides/installing-python-libraries#installing-python-libraries</td><td>2</td><td>6.0</td></tr><tr><td class="row-num">9</td><td>zuora</td><td>Zuora Bulk</td><td>/docs/components/zuora-bulk#zuora-bulk</td><td>2</td><td>4.0</td></tr><tr><td class="row-num">10</td><td></td><td>Access controls</td><td>/docs/security/deployment-options#access-controls</td><td>1</td><td>3.0</td></tr><tr><td class="row-num">11</td><td></td><td>Create a new environment</td><td>/api-reference/environments/create-a-new-environment#create-a-new-environment</td><td>1</td><td>2.0</td></tr><tr><td class="row-num">12</td><td></td><td>Maia runner installation using a CloudFormation quick-create link</td><td>/docs/guides/runner-installation-cloudformation-quick-create#maia-runner-installation-using-a-cloudf</td><td>1</td><td>3.0</td></tr><tr><td class="row-num">13</td><td></td><td>System variables</td><td>/docs/guides/iterator-components#system-variables</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">14</td><td></td><td>System variables</td><td>/docs/guides/system-variables#system-variables</td><td>1</td><td>3.0</td></tr><tr><td class="row-num">15</td><td>Access control</td><td>Authentication and access control</td><td>/docs/security/authentication-and-access-control#authentication-and-access-control</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">16</td><td>Aggregate</td><td>Aggregate</td><td>/docs/components/aggregate#aggregate</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">17</td><td>Artifact</td><td>What is an artifact?</td><td>/docs/api-reference/understanding-artifacts#what-is-an-artifact</td><td>1</td><td>3.0</td></tr><tr><td class="row-num">18</td><td>CUSTOM_CERTIFICATE_STAGE</td><td>Using a proxy server and custom certificates</td><td>/docs/guides/optional-runner-parameters#using-a-proxy-server-and-custom-certificates</td><td>1</td><td>2.0</td></tr><tr><td class="row-num">19</td><td>Custom connector pag</td><td>Pagination in custom connectors</td><td>/docs/guides/pagination#pagination-in-custom-connectors</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">20</td><td>Example of environemnt creation through API CAll in DPC</td><td>API method</td><td>/docs/api-reference/understanding-artifacts#api-method</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">21</td><td>Git lab</td><td>2. Set up GitLab project roles and permissions</td><td>/docs/guides/connect-gitlab-repository-prerequisites#2-set-up-gitlab-project-roles-and-permissions</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">22</td><td>Gong-Extensive</td><td>Gong</td><td>/docs/components/gong#gong</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">23</td><td>Google bigQuery setup</td><td>G</td><td>/docs/guides/glossary#g</td><td>1</td><td>4.0</td></tr><tr><td class="row-num">24</td><td>INstances</td><td>What is a data plane?</td><td>/docs/guides/runner-overview#what-is-a-data-plane</td><td>1</td><td>6.0</td></tr><tr><td class="row-num">25</td><td>OAuth</td><td>OAuth</td><td>/docs/guides/oauth#oauth</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">26</td><td>Query to scalar</td><td>Query Result To Scalar</td><td>/docs/components/query-result-to-scalar#query-result-to-scalar</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">27</td><td>Runner</td><td>What is Maia runner?</td><td>/docs/guides/runner-overview#what-is-maia-runner</td><td>1</td><td>2.0</td></tr><tr><td class="row-num">28</td><td>S3 load</td><td>S3 Load</td><td>/docs/components/s3-load#s3-load</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">29</td><td>access</td><td>Authentication and access control</td><td>/docs/security/authentication-and-access-control#authentication-and-access-control</td><td>1</td><td>1.0</td></tr><tr><td class="row-num">30</td><td>activecam</td><td>ActiveCampaign</td><td>/docs/components/activecampaign#activecampaign</td><td>1</td><td>1.0</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="section-title">User journey</div>
+  <div class="table-card">
+    <h3>Internal link clicks <span class="badge">top 20</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>From page</th><th>Link text</th><th>Destination</th><th>Clicks</th></tr></thead>
+      <tbody><tr><td class="row-num">1</td><td>/</td><td>Components</td><td>/docs/components/connectors-overview</td><td>30</td></tr><tr><td class="row-num">2</td><td>/</td><td>Guides</td><td>/docs/guides/maia-overview</td><td>29</td></tr><tr><td class="row-num">3</td><td>/</td><td>Admin</td><td>/docs/administration/registration</td><td>22</td></tr><tr><td class="row-num">4</td><td>/</td><td>Changelog</td><td>/docs/changelog/2026-changelog</td><td>19</td></tr><tr><td class="row-num">5</td><td>/</td><td>API Reference</td><td>/docs/api-reference/maia-api-overview</td><td>13</td></tr><tr><td class="row-num">6</td><td>/docs/administration/project-roles</td><td>Environment roles</td><td>/docs/administration/environment-roles</td><td>9</td></tr><tr><td class="row-num">7</td><td>/docs/api-reference/maia-api-overview</td><td>GETPipeline Executions</td><td>/api-reference/pipeline-execution/pipeline-executions</td><td>9</td></tr><tr><td class="row-num">8</td><td>/</td><td>Maia Documentation home page</td><td>/</td><td>8</td></tr><tr><td class="row-num">9</td><td>/docs/administration/account-roles</td><td>Project roles</td><td>/docs/administration/project-roles</td><td>8</td></tr><tr><td class="row-num">10</td><td>/docs/administration/environment-roles</td><td>Project roles</td><td>/docs/administration/project-roles</td><td>8</td></tr><tr><td class="row-num">11</td><td>/docs/api-reference/maia-api-overview</td><td>Authenticate to the Maia API</td><td>/docs/api-reference/maia-api-authentication</td><td>8</td></tr><tr><td class="row-num">12</td><td>/docs/streaming/microsoft-sql-server-configure-database</td><td>Microsoft SQL Server streaming connector</td><td>/docs/streaming/microsoft-sql-server-streaming-source</td><td>8</td></tr><tr><td class="row-num">13</td><td>/docs/streaming/microsoft-sql-server-streaming-source</td><td>Configure your Microsoft SQL Server database</td><td>/docs/streaming/microsoft-sql-server-configure-database</td><td>8</td></tr><tr><td class="row-num">14</td><td>/</td><td>Build pipelinesDescribe your data objective and Maia builds the pipeline—orchestration, transformati</td><td>/docs/guides/maia-pipelines</td><td>7</td></tr><tr><td class="row-num">15</td><td>/docs/administration/registration</td><td>Components</td><td>/docs/components/connectors-overview</td><td>7</td></tr><tr><td class="row-num">16</td><td>/docs/changelog/2026-changelog</td><td>Components</td><td>/docs/components/connectors-overview</td><td>7</td></tr><tr><td class="row-num">17</td><td>/docs/administration/project-roles</td><td>Account roles</td><td>/docs/administration/account-roles</td><td>6</td></tr><tr><td class="row-num">18</td><td>/docs/administration/registration</td><td>Home</td><td>/</td><td>6</td></tr><tr><td class="row-num">19</td><td>/docs/components/connectors-overview</td><td>Guides</td><td>/docs/guides/maia-overview</td><td>6</td></tr><tr><td class="row-num">20</td><td>/docs/guides/maia-overview</td><td>Maia product architecture</td><td>/docs/guides/architecture-overview</td><td>6</td></tr></tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="site-footer">
+  Auto-generated by n8n · Matillion Docs · 2026-06-18 to 2026-06-24
+</div>
+
+<script>
+const BRAND = '#5c3dde', ACCENT = '#0ea5e9', GREEN = '#10b981', AMBER = '#f59e0b';
+const COLORS = [BRAND, ACCENT, GREEN, AMBER, '#ec4899', '#f97316', '#14b8a6', '#8b5cf6'];
+
+const chartDefaults = {
+  responsive: true,
+  plugins: { legend: { display: false } },
+  scales: { x: { ticks: { font: { size: 11 } }, grid: { display: false } }, y: { beginAtZero: true, ticks: { font: { size: 11 } }, grid: { color: '#f3f4f6' } } }
+};
+
+new Chart(document.getElementById('trafficChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ["(direct) / (none)","google / organic","docs.matillion.com / referral","(not set) / (not set)","localhost:3002 / referral","bing / organic","statics.teams.cdn.office.net / referral","matillion.lightning.force.com / referral"],
+    datasets: [{ label: 'Sessions', data: [2564,1499,1414,406,284,54,26,20], backgroundColor: COLORS, borderRadius: 5 }]
+  },
+  options: { ...chartDefaults, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.y.toLocaleString() + ' sessions' } } } }
+});
+
+new Chart(document.getElementById('pagesChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ["/","/docs/components/table-input","/docs/api-reference/maia-api-overview","/docs/security/network-access-and-ip-allowlist-requirements","/docs/guides/maia-overview","/docs/administration/registration","/docs/changelog/2026-changelog","/docs/administration/single-sign-on","/docs/api-reference/maia-api-authentication","/docs/administration/environment-roles"],
+    datasets: [{ label: 'Views', data: [1130,596,216,208,148,96,89,79,70,58], backgroundColor: ACCENT, borderRadius: 5 }]
+  },
+  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { font: { size: 11 } }, grid: { color: '#f3f4f6' } }, y: { ticks: { font: { size: 10 } }, grid: { display: false } } } }
+});
+
+new Chart(document.getElementById('searchChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ["supported python","Google big","environment","environment var","github app","maia doesnt have any options to read-from or write-to ftps locations. what are some alternatives we ","architecture","azure docu","context.update","csv load"],
+    datasets: [{ label: 'Searches', data: [5,3,3,3,3,3,2,2,2,2], backgroundColor: GREEN, borderRadius: 5 }]
+  },
+  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { font: { size: 11 } }, grid: { color: '#f3f4f6' } }, y: { ticks: { font: { size: 10 } }, grid: { display: false } } } }
+});
+
+new Chart(document.getElementById('journeyChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ["Components","Guides","Admin","Changelog","API Reference","Environment roles","GETPipeline Executions","Maia Documentation home page"],
+    datasets: [{ label: 'Clicks', data: [30,29,22,19,13,9,9,8], backgroundColor: AMBER, borderRadius: 5 }]
+  },
+  options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { font: { size: 11 } }, grid: { color: '#f3f4f6' } }, y: { ticks: { font: { size: 10 } }, grid: { display: false } } } }
+});
+</script>
+</body>
+</html>
